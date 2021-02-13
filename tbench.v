@@ -1,24 +1,22 @@
 module tb;
+	reg XTAL1_20MHz_i;
 
-	reg clk;
-
-	reg rst;
-	reg clk_en;
-
-	reg [11:0] load_val;
-	reg load_en;
-	wire out;
-
-	
-
-
-	always #1 clk=~clk;
-	
-	
-		
-
-	initial begin 
-	clk_en=1;
+	always begin
+		XTAL1_20MHz_i = 0;
+		forever
+			#(10) XTAL1_20MHz_i = !XTAL1_20MHz_i;
 	end
-	 PWM pwm1(.Clock(clk), .Clk_En(clk_en),.Rst(rst),.Load(load_val),.Load_en(load_en), .PWM_o(out), .D(12'd100));
+	
+	reg[15:0] i;
+	always begin
+		i = 0;
+		#10
+		forever begin
+			#20
+			i <= i+1;
+			if(i>=5000) $stop;
+		end
+	end
+	
+	PWM pwm1(.Clock(XTAL1_20MHz_i), .Load(0), .Load_en(1'b0), .PWM_o(out));
 endmodule 
