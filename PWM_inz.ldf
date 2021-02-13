@@ -6,7 +6,13 @@
         <Source name="TOP.v" type="Verilog" type_short="Verilog">
             <Options top_module="PWM"/>
         </Source>
+        <Source name="tbench.v" type="Verilog" type_short="Verilog" syn_sim="SimOnly">
+            <Options/>
+        </Source>
         <Source name="PWM_inz.lpf" type="Logic Preference" type_short="LPF">
+            <Options/>
+        </Source>
+        <Source name="simulation/simulation.spf" type="Simulation Project File" type_short="SPF">
             <Options/>
         </Source>
     </Implementation>
