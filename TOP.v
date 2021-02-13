@@ -9,50 +9,61 @@ module PWM (Clock, Load, Load_en, PWM_o, delayed_pwm_o );
 	// Counter
 
 	reg [11:0] counter;
-	reg Up;
-	reg Down;
+	reg UpDown;
 
 	reg[2:0] Load_en_r;
-		
+	
+	reg [3:0] counter_shift ;
+	reg i;
 	always @(posedge Clock) begin
 		Load_en_r <= {Load_en, Load_en_r[2:1]};
 		
 		if(Load_en_r[1:0] == 2'b10)
 			counter <= Load;
+		else if (UpDown)
+			counter <= counter+1;
 		else 
-			counter <= counter+Up-Down;
+			counter <= counter-1;
 		
 		if (counter > 12'd1000) begin
-			Up<=0;
-			Down<=1;
+			UpDown<=0;
 		end
 		else if (counter < 12'd2)begin
-			Up<=1;
-			Down<=0;
+			UpDown<=1;
 		end	
+		if( counter_shift>14 && PWM_o==1) 
+			counter_shift<=counter_shift;
+		else 
+			counter_shift<=counter_shift+1;
+			
+		if(counter_shift>14) 
+			i <=1;
+			
+		else
+			i <= 0;
+			
 	end
 	
 	initial begin
 		counter = 0;
-		Up = 1;
-		Down = 0;
-		
-	
-		
+		UpDown = 1;
+		counter_shift=0;
+		reg_delay_mem=0;
+
 	end
-	reg [3:0] reg_delay_mem ;
+	reg reg_delay_mem;
 	
-	output wire delayed_pwm_o;
+	output  delayed_pwm_o;
 	DPR16X4C delay_mem(
 		.DI3(), .DI2(),
 		.DI1(),.DI0(PWM_o), 
-		.WAD3(reg_delay_mem[3]),.WAD2(reg_delay_mem[2]),
-		.WAD1(reg_delay_mem[1]),.WAD0(reg_delay_mem[0]),
+		.WAD3(1),.WAD2(1),
+		.WAD1(1),.WAD0(1),
 		.WCK(Clock), .WRE(1'b1),
-		.RAD3(reg_delay_mem[3]),.RAD2(reg_delay_mem[2]),
-		.RAD1(reg_delay_mem[1]),.RAD0(reg_delay_mem[0]),
-		.DO3(delayed_pwm_o), .DO2(),
-		.DO1(), .DO0());
+		.RAD3(i),.RAD2(i),
+		.RAD1(i),.RAD0(i),
+		.DO3(), .DO2(),
+		.DO1(), .DO0(delayed_pwm_o));
 	
 	assign PWM_o = counter > 500;
 
