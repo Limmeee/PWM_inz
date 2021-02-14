@@ -14,7 +14,7 @@ module PWM (Clock, Load, Load_en, PWM_o, delayed_pwm_o );
 	reg[2:0] Load_en_r;
 
 	reg [3:0] counter_shift ;
-	reg i;
+	reg [3:0] cykl;
 	always @(posedge Clock) begin
 		Load_en_r <= {Load_en, Load_en_r[2:1]};
 
@@ -30,15 +30,20 @@ module PWM (Clock, Load, Load_en, PWM_o, delayed_pwm_o );
 		end
 		else if (counter < 12'd2)begin
 			UpDown<=1;
-		end
+		end	
 
-		counter_shift <= counter_shift + 1;
+			counter_shift<=counter_shift+1;
+			
+		if(counter_shift>cykl) 
+			counter_shift<=0;
+			
 	end
 
 	initial begin
 		counter = 0;
 		UpDown = 1;
 		counter_shift=0;
+		cykl=5;
 	end
 
 	output  delayed_pwm_o;

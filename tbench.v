@@ -19,5 +19,5 @@ module tb;
 		end
 	end
 
-	PWM pwm1(.Clock(XTAL1_20MHz_i), .Load(0), .Load_en(1'b0), .PWM_o(out),.delayed_pwm_o(delayed_out) );
+	PWM pwm1(.Clock(XTAL1_20MHz_i), .Load(0), .Load_en(1'b0), .PWM_o(out),.PWM_o2(out2),.delayed_pwm_o(delayed_out) );
 endmodule
